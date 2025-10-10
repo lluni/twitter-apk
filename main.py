@@ -113,7 +113,7 @@ def main():
 
 
 def manual(version:str):
-    link = f'https://www.apkmirror.com/apk/x-corp/twitter/twitter-{version.replace(".","-")}-release'
+    link = f'https://www.apkmirror.com/apk/x-corp/twitter/x-{version.replace(".","-")}-release'
     latest_version = Version(link=link,version=version)
     process(latest_version)
 
