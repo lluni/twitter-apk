@@ -46,20 +46,9 @@ def process(latest_version: Version):
         "crimera/piko", "^patches.*rvp$", "bins", "patches.rvp", True
     )
 
-    print("Downloading integrations")
-    integrationsRelease = download_release_asset(
-        "crimera/revanced-integrations",
-        "^rev.*apk$",
-        "bins",
-        "integrations.apk",
-    )
-
-    print(integrationsRelease["body"])
-
     message: str = f"""
 Changelogs:
 [piko-{pikoRelease["tag_name"]}]({pikoRelease["html_url"]})
-[integrations-{integrationsRelease["tag_name"]}]({integrationsRelease["html_url"]})
 """
 
     build_apks(latest_version)
