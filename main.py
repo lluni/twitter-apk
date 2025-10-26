@@ -76,8 +76,6 @@ Changelogs:
         latest_version.version
     )
 
-    report_to_telegram()
-
 
 def main():
     # get latest version
