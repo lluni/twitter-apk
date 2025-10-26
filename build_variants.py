@@ -5,7 +5,6 @@ from utils import patch_apk
 def build_apks(latest_version: Version):
     # patch
     apk = "big_file_merged.apk"
-    integrations = "bins/integrations.apk"
     patches = "bins/patches.rvp"
     cli = "bins/cli.jar"
 
@@ -28,7 +27,6 @@ def build_apks(latest_version: Version):
 
     patch_apk(
         cli,
-        integrations,
         patches,
         apk,
         includes=common_includes,
@@ -38,7 +36,6 @@ def build_apks(latest_version: Version):
 
     patch_apk(
         cli,
-        integrations,
         patches,
         apk,
         includes=common_includes,
@@ -48,7 +45,6 @@ def build_apks(latest_version: Version):
 
     patch_apk(
         cli,
-        integrations,
         patches,
         apk,
         includes=["Bring back twitter"] + common_includes,
@@ -58,7 +54,6 @@ def build_apks(latest_version: Version):
 
     patch_apk(
         cli,
-        integrations,
         patches,
         apk,
         includes=["Bring back twitter"] + common_includes,
