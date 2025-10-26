@@ -21,7 +21,7 @@ def process(latest_version: Version):
 
     download_link: Variant | None = None
     for variant in variants:
-        if variant.is_bundle and variant.arcithecture == "universal":
+        if variant.is_bundle and variant.arcithecture == "arm64-v8a":
             download_link = variant
             break
 
