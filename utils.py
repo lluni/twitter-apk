@@ -121,7 +121,7 @@ def patch_apk(
 
     command.append(apk)
 
-    subprocess.run(command).check_returncode()
+    subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE).check_returncode()
 
     # remove -patched from the apk to match out
     if out is not None:
