@@ -94,7 +94,7 @@ def patch_apk(
         "-jar",
         cli,
         "patch",
-        "-b",
+        "-p",
         patches,
         # use j-hc's keystore so we wouldn't need to reinstall
         "--keystore",
