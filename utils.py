@@ -111,12 +111,12 @@ def patch_apk(
 
     if includes is not None:
         for i in includes:
-            command.append("-i")
+            command.append("-e")
             command.append(i)
 
     if excludes is not None:
         for e in excludes:
-            command.append("-e")
+            command.append("-d")
             command.append(e)
 
     command.append(apk)
