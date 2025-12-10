@@ -23,7 +23,7 @@ def build_apks(latest_version: Version):
         "Force enable translate",
     ]
 
-    common_excludes = ["Customize timeline top bar"]
+    common_excludes = []
 
     patch_apk(
         cli,
