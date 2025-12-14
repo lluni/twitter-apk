@@ -9,12 +9,9 @@ on:
         
 permissions:
   contents: write
-  issues: write
-  pull-requests: write
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -23,7 +20,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         distribution: 'zulu' # See 'Supported distributions' for available options
-        java-version: '11'
+        java-version: '17'
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
