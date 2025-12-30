@@ -29,7 +29,7 @@ def build_apks(latest_version: Version):
         cli,
         patches,
         apk,
-        includes=common_includes,
+        includes=["Dynamic color"] + common_includes,
         excludes=common_excludes,
         out=f"x-piko-material-you-v{latest_version.version}.apk",
     )
@@ -47,7 +47,7 @@ def build_apks(latest_version: Version):
         cli,
         patches,
         apk,
-        includes=["Bring back twitter"] + common_includes,
+        includes=["Bring back twitter", "Dynamic color"] + common_includes,
         excludes=common_excludes,
         out=f"twitter-piko-material-you-v{latest_version.version}.apk",
     )
