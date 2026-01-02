@@ -51,13 +51,15 @@ def report_to_telegram():
     send_message(message, tg_token, tg_chat_id, tg_thread_id)
 
 
-def download(link, out, headers=None):
+def download(link, out, headers=None, session=None):
     if os.path.exists(out):
         print(f"{out} already exists skipping download")
         return
 
+    requester = session if session else requests
+
     # https://www.slingacademy.com/article/python-requests-module-how-to-download-files-from-urls/#Streaming_Large_Files
-    with requests.get(link, stream=True, headers=headers) as r:
+    with requester.get(link, stream=True, headers=headers) as r:
         r.raise_for_status()
         with open(out, "wb") as f:
             for chunk in r.iter_content(chunk_size=8192):
