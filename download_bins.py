@@ -46,5 +46,5 @@ def download_apkeditor():
 def download_revanced_bins():
     print("Downloading cli")
     download_release_asset(
-        "inotia00/revanced-cli", "^revanced-cli.*jar$", "bins", "cli.jar", version="v5.0.1"
+        "inotia00/revanced-cli", "^revanced-cli.*jar$", "bins", "cli.jar", version="v5.0.2"
     )
