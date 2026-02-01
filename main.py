@@ -21,7 +21,7 @@ def process(latest_version: Version):
 
     download_link: Variant | None = None
     for variant in variants:
-        if variant.is_bundle and variant.arcithecture == "universal":
+        if variant.is_bundle and variant.architecture == "universal":
             download_link = variant
             break
 
@@ -43,23 +43,12 @@ def process(latest_version: Version):
 
     print("Downloading patches")
     pikoRelease = download_release_asset(
-        "crimera/piko", "^piko.*jar$", "bins", "patches.jar"
+        "crimera/piko", "^patches.*rvp$", "bins", "patches.rvp", include_prereleases=True
     )
-
-    print("Downloading integrations")
-    integrationsRelease = download_release_asset(
-        "crimera/revanced-integrations",
-        "^rev.*apk$",
-        "bins",
-        "integrations.apk",
-    )
-
-    print(integrationsRelease["body"])
 
     message: str = f"""
 Changelogs:
 [piko-{pikoRelease["tag_name"]}]({pikoRelease["html_url"]})
-[integrations-{integrationsRelease["tag_name"]}]({integrationsRelease["html_url"]})
 """
 
     build_apks(latest_version)
@@ -108,7 +97,7 @@ def main():
     else:
         print("No new version found")
         return
-    
+
     process(latest_version)
 
 
@@ -123,10 +112,10 @@ if __name__ == "__main__":
     # 0 = auto; 1 = manual;
     parser.add_argument('--m', action="store", dest='mode', default=0)
     parser.add_argument('--v', action="store", dest='version', default=0)
-    
+
     args = parser.parse_args()
     mode = args.mode
-    
+
     if not mode: # auto
         main()
     else: # manual
