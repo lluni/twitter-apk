@@ -21,7 +21,7 @@ def process(latest_version: Version):
 
     download_link: Variant | None = None
     for variant in variants:
-        if variant.is_bundle and ("universal" in variant.arcithecture or "arm64-v8a" in variant.arcithecture):
+        if variant.is_bundle and ("universal" in variant.architecture or "arm64-v8a" in variant.architecture):
             download_link = variant
             break
 
@@ -43,7 +43,7 @@ def process(latest_version: Version):
 
     print("Downloading patches")
     pikoRelease = download_release_asset(
-        "crimera/piko", "^patches.*rvp$", "bins", "patches.rvp", True
+        "crimera/piko", "^patches.*rvp$", "bins", "patches.rvp", include_prereleases=True
     )
 
     message: str = f"""
@@ -95,7 +95,7 @@ def main():
     else:
         print("No new version found")
         return
-    
+
     process(latest_version)
 
 
@@ -110,10 +110,10 @@ if __name__ == "__main__":
     # 0 = auto; 1 = manual;
     parser.add_argument('--m', action="store", dest='mode', default=0)
     parser.add_argument('--v', action="store", dest='version', default=0)
-    
+
     args = parser.parse_args()
     mode = args.mode
-    
+
     if not mode: # auto
         main()
     else: # manual

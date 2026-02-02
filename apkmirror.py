@@ -17,7 +17,7 @@ class Version:
 class Variant:
     is_bundle: bool
     link: str
-    arcithecture: str
+    architecture: str
 
 
 @dataclass
@@ -143,7 +143,7 @@ def get_variants(version: Version) -> list[Variant]:
 
         link: str = f"https://www.apkmirror.com{link_element.attrs["href"]}"
         variants.append(
-            Variant(is_bundle=is_bundle, link=link, arcithecture=architecture)
+            Variant(is_bundle=is_bundle, link=link, architecture=architecture)
         )
 
     print(variants)
