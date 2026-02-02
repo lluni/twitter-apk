@@ -39,12 +39,14 @@ class FailedToFetch(Exception):
         self.message = f"Failed to fetch{" "+url if url is not None else ""}"  # noqa: E501
         super().__init__(self.message)
 
+# Initialize a global session to reuse TCP connections
+session = requests.Session()
 
 def get_versions(url: str) -> list[Version]:
     """
     Get the latest version of the app from the given apkmirror url
     """
-    response = requests.get(url, headers=HEADERS)
+    response = session.get(url, headers=HEADERS)
     if response.status_code != 200:
         raise FailedToFetch(f"{url}: {response.status_code}")
 
@@ -74,7 +76,7 @@ def download_apk(variant: Variant):
 
     url = variant.link
 
-    response = requests.get(url, headers=HEADERS)
+    response = session.get(url, headers=HEADERS)
 
     if response.status_code != 200:
         raise FailedToFetch(url)
@@ -90,7 +92,7 @@ def download_apk(variant: Variant):
     )
 
     # get direct link
-    download_page = requests.get(download_page_link, headers=HEADERS)
+    download_page = session.get(download_page_link, headers=HEADERS)
     if response.status_code != 200:
         raise FailedToFetch(download_page_link)
 
@@ -103,12 +105,13 @@ def download_apk(variant: Variant):
     direct_link = f"https://www.apkmirror.com/{cast(Tag, direct_link).attrs["href"]}"
     print(f"Direct link: {direct_link}")
 
-    download(direct_link, "big_file.apkm", headers=HEADERS)
+    # Pass the session to reuse the connection
+    download(direct_link, "big_file.apkm", headers=HEADERS, session=session)
 
 
 def get_variants(version: Version) -> list[Variant]:
     url = version.link
-    variants_page = requests.get(url, headers=HEADERS)
+    variants_page = session.get(url, headers=HEADERS)
     if variants_page is None:
         raise FailedToFetch(url)
 
