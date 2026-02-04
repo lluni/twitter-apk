@@ -77,7 +77,7 @@ def run_command(command: list[str]):
 
 def merge_apk(path: str):
     subprocess.run(
-        ["java", "-jar", "./bins/apkeditor.jar", "m", "-i", path]
+        ["java", "-jar", "./bins/apkeditor.jar", "m", "-extractNativeLibs", "true", "-i", path]
     ).check_returncode()
 
 
