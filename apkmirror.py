@@ -1,10 +1,7 @@
 from dataclasses import dataclass
 from typing import cast
 from bs4 import BeautifulSoup, Tag
-from constants import HEADERS
-import requests
-
-from utils import download
+from utils import download, get_scraper
 
 
 @dataclass
@@ -29,22 +26,20 @@ class App:
 class FailedToFindElement(Exception):
     def __init__(self, message=None) -> None:
         self.message = (
-            f"Failed to find element{" "+message if message is not None else ""}"  # noqa: E501
+            f"Failed to find element{' ' + message if message is not None else ''}"  # noqa: E501
         )
         super().__init__(self.message)
 
 
 class FailedToFetch(Exception):
     def __init__(self, url=None) -> None:
-        self.message = f"Failed to fetch{" "+url if url is not None else ""}"  # noqa: E501
+        self.message = f"Failed to fetch{' ' + url if url is not None else ''}"  # noqa: E501
         super().__init__(self.message)
 
 
 def get_versions(url: str) -> list[Version]:
-    """
-    Get the latest version of the app from the given apkmirror url
-    """
-    response = requests.get(url, headers=HEADERS)
+    """Get the latest version of the app from the given apkmirror url"""
+    response = get_scraper().get(url)
     if response.status_code != 200:
         raise FailedToFetch(f"{url}: {response.status_code}")
 
@@ -63,18 +58,17 @@ def get_versions(url: str) -> list[Version]:
                 continue
 
             version = version.string.strip()
-            link = f"https://www.apkmirror.com/{versionRow.find("a")["href"]}"
+            link = f"https://www.apkmirror.com/{versionRow.find('a')['href']}"
             out.append(Version(version=version, link=link))
 
     return out
 
 
-def download_apk(variant: Variant):
+def download_apk(variant: Variant, path: str = "big_file.apkm"):
     """Download apk from the variant link"""
-
     url = variant.link
 
-    response = requests.get(url, headers=HEADERS)
+    response = get_scraper().get(url)
 
     if response.status_code != 200:
         raise FailedToFetch(url)
@@ -86,11 +80,10 @@ def download_apk(variant: Variant):
         raise FailedToFindElement("Download button")
 
     download_page_link = (
-        f"https://www.apkmirror.com/{cast(Tag, downloadButton).attrs["href"]}"
+        f"https://www.apkmirror.com/{cast(Tag, downloadButton).attrs['href']}"
     )
 
-    # get direct link
-    download_page = requests.get(download_page_link, headers=HEADERS)
+    download_page = get_scraper().get(download_page_link)
     if response.status_code != 200:
         raise FailedToFetch(download_page_link)
 
@@ -100,15 +93,21 @@ def download_apk(variant: Variant):
     if direct_link is None:
         raise FailedToFindElement("download link")
 
-    direct_link = f"https://www.apkmirror.com/{cast(Tag, direct_link).attrs["href"]}"
-    print(f"Direct link: {direct_link}")
+    direct_link_href = cast(Tag, direct_link).attrs["href"]
+    direct_link_url = f"https://www.apkmirror.com/{direct_link_href}"
+    print(f"Direct link: {direct_link_url}")
 
-    download(direct_link, "big_file.apkm", headers=HEADERS)
+    download(
+        direct_link_url,
+        path,
+        use_scraper=True,
+        headers={"Referer": download_page_link},
+    )
 
 
 def get_variants(version: Version) -> list[Variant]:
     url = version.link
-    variants_page = requests.get(url, headers=HEADERS)
+    variants_page = get_scraper().get(url)
     if variants_page is None:
         raise FailedToFetch(url)
 
@@ -130,18 +129,19 @@ def get_variants(version: Version) -> list[Variant]:
         if len(cells) == 0:
             print("Could not find cells")
 
-        is_bundle = variant_row.find("span", {"class": "apkm-badge"})
-        if is_bundle is None:
+        is_bundle_tag = variant_row.find("span", {"class": "apkm-badge"})
+        is_bundle = False
+        if is_bundle_tag is None:
             print("Failed to find apk-badge")
         else:
-            is_bundle = is_bundle.string.strip() == "BUNDLE"
+            is_bundle = is_bundle_tag.string.strip() == "BUNDLE"
 
         architecture: str = cells[1].string
         link_element = variant_row.find("a", {"class": "accent_color"})
         if link_element is None:
             print("Failed to find the link element")
 
-        link: str = f"https://www.apkmirror.com{link_element.attrs["href"]}"
+        link: str = f"https://www.apkmirror.com{link_element.attrs['href']}"
         variants.append(
             Variant(is_bundle=is_bundle, link=link, architecture=architecture)
         )
