@@ -1,8 +1,8 @@
 from apkmirror import Version, Variant
 from build_variants import build_apks
-from download_bins import download_apkeditor, download_revanced_bins
+from download_bins import download_apkeditor, download_cli
 import github
-from utils import panic, merge_apk, publish_release, report_to_telegram
+from utils import panic, merge_apk, publish_release
 from download_bins import download_release_asset
 import apkmirror
 import os
@@ -39,11 +39,11 @@ def process(latest_version: Version):
     else:
         print("apkm is already merged")
 
-    download_revanced_bins()
+    download_cli()
 
     print("Downloading patches")
     pikoRelease = download_release_asset(
-        "crimera/piko", "^patches.*rvp$", "bins", "patches.rvp", include_prereleases=False
+        "crimera/piko", "^patches.*mpp$", "bins", "patches.mpp", include_prereleases=True
     )
 
     message: str = f"""

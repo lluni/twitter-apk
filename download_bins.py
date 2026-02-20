@@ -39,12 +39,12 @@ def download_release_asset(repo: str, regex: str, out_dir: str, filename=None, i
 
 
 def download_apkeditor():
-    print("Downloading apkeditor")
+    print("Downloading APKEditor")
     download_release_asset("REAndroid/APKEditor", "APKEditor", "bins", "apkeditor.jar")
 
 
-def download_revanced_bins():
-    print("Downloading cli")
+def download_cli():
+    print("Downloading CLI")
     download_release_asset(
-        "inotia00/revanced-cli", "^revanced-cli.*jar$", "bins", "cli.jar", version="v5.0.2"
+        "MorpheApp/morphe-cli", "^morphe-cli.*-all\.jar$", "bins", "cli.jar", version="v1.3.0"
     )

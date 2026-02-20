@@ -1,5 +1,4 @@
 import os
-import shutil
 import requests
 import subprocess
 import sys
@@ -138,16 +137,13 @@ def patch_apk(
             command.append("-d")
             command.append(e)
 
+    if out is not None:
+        command.append("--out")
+        command.append(out)
+
     command.append(apk)
 
     subprocess.run(command).check_returncode()
-
-    # remove -patched from the apk to match out
-    if out is not None:
-        cli_output = f"{str(apk).removesuffix(".apk")}-patched.apk"
-        if os.path.exists(out):
-            os.unlink(out)
-        shutil.move(cli_output, out)
 
 
 def publish_release(tag: str, files: list[str], message: str, title = ""):
