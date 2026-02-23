@@ -1,9 +1,8 @@
 from apkmirror import Version, Variant
 from build_variants import build_apks
-from download_bins import download_apkeditor, download_revanced_bins
+from download_bins import download_apkeditor, download_morphe_cli, download_release_asset
 import github
 from utils import panic, merge_apk, publish_release, report_to_telegram
-from download_bins import download_release_asset
 import apkmirror
 import os
 import argparse
@@ -16,7 +15,6 @@ def get_latest_release(versions: list[Version]) -> Version | None:
 
 
 def process(latest_version: Version):
-    # get bundle and universal variant
     variants: list[Variant] = apkmirror.get_variants(latest_version)
 
     download_link: Variant | None = None
@@ -26,7 +24,13 @@ def process(latest_version: Version):
             break
 
     if download_link is None:
-        raise Exception("Bundle not Found")
+        bundle_variants = [v for v in variants if v.is_bundle]
+        if not bundle_variants:
+            raise Exception("Bundle not Found")
+
+        fallback = next((v for v in bundle_variants if v.architecture == "arm64-v8a"), None)
+        download_link = fallback or bundle_variants[0]
+        print(f"Universal bundle not found, falling back to {download_link.architecture}")
 
     apkmirror.download_apk(download_link)
     if not os.path.exists("big_file.apkm"):
@@ -39,11 +43,11 @@ def process(latest_version: Version):
     else:
         print("apkm is already merged")
 
-    download_revanced_bins()
+    download_morphe_cli()
 
     print("Downloading patches")
     pikoRelease = download_release_asset(
-        "crimera/piko", "^patches.*rvp$", "bins", "patches.rvp", include_prereleases=True
+        "crimera/piko", "^patches.*mpp$", "bins", "patches.mpp", include_prereleases=True
     )
 
     message: str = f"""
