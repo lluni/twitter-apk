@@ -64,6 +64,10 @@ def report_to_telegram():
 
 
 def download(link, out, headers=None, use_scraper=False):
+    dir_name = os.path.dirname(out)
+    if dir_name:
+        os.makedirs(dir_name, exist_ok=True)
+
     if os.path.exists(out):
         print(f"{out} already exists skipping download")
         return

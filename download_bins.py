@@ -1,9 +1,18 @@
-import requests
 import re
+
+import requests
+
 from utils import download
 
 
-def download_release_asset(repo: str, regex: str, out_dir: str, filename=None, include_prereleases: bool = False, version = None):
+def download_release_asset(
+    repo: str,
+    regex: str,
+    out_dir: str,
+    filename = None,
+    include_prereleases: bool = False,
+    version = None,
+):
     url = f"https://api.github.com/repos/{repo}/releases"
 
     response = requests.get(url)
@@ -18,20 +27,22 @@ def download_release_asset(repo: str, regex: str, out_dir: str, filename=None, i
     if version is not None:
         releases = [r for r in releases if r["tag_name"] == version]
 
-    if len(releases) == 0:
+    if not releases:
         raise Exception(f"No release found for version {version}")
 
     latest_release = releases[0]
 
-    assets = latest_release["assets"]
-
     link = None
-    for i in assets:
-        if re.search(regex, i["name"]):
-            link = i["browser_download_url"]
+    for asset in latest_release["assets"]:
+        name = asset["name"]
+        if re.search(regex, name):
+            link = asset["browser_download_url"]
             if filename is None:
-                filename = i["name"]
+                filename = name
             break
+
+    if link is None:
+        raise Exception(f"Failed to find asset matching {regex} on release {latest_release['tag_name']}")
 
     download(link, f"{out_dir.lstrip('/')}/{filename}")
 
@@ -43,8 +54,12 @@ def download_apkeditor():
     download_release_asset("REAndroid/APKEditor", "APKEditor", "bins", "apkeditor.jar")
 
 
-def download_cli():
-    print("Downloading CLI")
+def download_morphe_cli(include_prereleases: bool = False):
+    print("Downloading morphe cli")
     download_release_asset(
-        "MorpheApp/morphe-cli", r"^morphe-cli.*-all\.jar$", "bins", "cli.jar", version="v1.3.0"
+        "MorpheApp/morphe-cli",
+        r"^morphe-cli.*-all\.jar$",
+        "bins",
+        "morphe-cli.jar",
+        include_prereleases=include_prereleases,
     )
