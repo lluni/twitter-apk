@@ -37,7 +37,7 @@ def process(latest_version: Version):
     else:
         print("apkm is already merged")
 
-    download_morphe_cli()
+    download_morphe_cli(include_prereleases=True)
 
     print("Downloading patches")
     pikoRelease = download_release_asset(
