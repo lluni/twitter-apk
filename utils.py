@@ -1,9 +1,10 @@
 import os
-import requests
 import subprocess
 import sys
-from typing import Optional, List
-from github import get_last_build_version
+
+import requests
+from constants import REPO
+from github import get_last_build_version, get_release_by_tag
 
 _scraper = None
 
@@ -34,17 +35,22 @@ def send_message(message: str, token: str, chat_id: str, thread_id: str):
         "chat_id": chat_id,
     }
 
-    requests.post(endpoint, data=data)
+    response = requests.post(endpoint, data=data)
+    response.raise_for_status()
 
 
-def report_to_telegram():
+def report_to_telegram(tag: str | None = None):
     tg_token = os.environ["TG_TOKEN"]
     tg_chat_id = os.environ["TG_CHAT_ID"]
     tg_thread_id = os.environ["TG_THREAD_ID"]
-    release = get_last_build_version("crimera/twitter-apk")
+
+    release = get_release_by_tag(REPO, tag) if tag else get_last_build_version(REPO)
+
+    if release is None and tag:
+        raise RuntimeError(f"Could not fetch release for tag: {tag}")
 
     if release is None:
-        raise Exception("Could not fetch release")
+        raise RuntimeError("Could not fetch latest release")
 
     downloads = [
         f"[{asset.name}]({asset.browser_download_url})" for asset in release.assets

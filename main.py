@@ -3,6 +3,7 @@ from build_variants import build_apks
 from download_bins import download_apkeditor, download_morphe_cli, download_release_asset
 import github
 from utils import panic, merge_apk, publish_release
+from constants import REPO
 import apkmirror
 import os
 import argparse
@@ -67,7 +68,7 @@ Changelogs:
 def main():
     # get latest version
     url: str = "https://www.apkmirror.com/apk/x-corp/twitter/"
-    repo_url: str = "lluni/twitter-apk"
+    repo_url: str = REPO
 
     versions = apkmirror.get_versions(url)
 
