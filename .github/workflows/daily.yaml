@@ -1,8 +1,8 @@
 name: Release - Daily
 
 on:
-  schedule:
-    - cron: '0 0 * * *' # daily at 00:00 UTC
+  # schedule:
+    # - cron: '0 0 * * *' # daily at 00:00 UTC
   workflow_dispatch:
 
 permissions:
